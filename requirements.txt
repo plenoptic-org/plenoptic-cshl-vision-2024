@@ -1,5 +1,5 @@
 sphinx
-sphinx-gallery
+myst-nb
 Pillow
 plenoptic
 pydata-sphinx-theme
@@ -7,3 +7,4 @@ myst-parser
 sphinx-copybutton
 ipywidgets
 jupyter
+jupytext
