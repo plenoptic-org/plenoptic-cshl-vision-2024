@@ -1,0 +1,9 @@
+sphinx
+sphinx-gallery
+Pillow
+plenoptic
+pydata-sphinx-theme
+myst-parser
+sphinx-copybutton
+ipywidgets
+jupyter
