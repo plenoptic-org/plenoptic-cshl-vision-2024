@@ -26,3 +26,11 @@ exclude_patterns = []
 
 html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
+html_favicon = '_static/plenoptic.ico'
+html_theme_options = {
+    "logo": {
+        "alt_text": "Home",
+        "image_light": "_static/plenoptic.svg",
+        "image_dark": "_static/plenoptic_darkmode.svg",
+    }
+}
