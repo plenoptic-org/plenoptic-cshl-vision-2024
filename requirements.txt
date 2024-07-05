@@ -1,8 +1,8 @@
 sphinx
 myst-nb
 Pillow
-plenoptic
-pydata-sphinx-theme
+plenoptic @ git+https://github.com/LabForComputationalVision/plenoptic.git@frontend_params
+sphinx-book-theme
 myst-parser
 sphinx-copybutton
 ipywidgets
