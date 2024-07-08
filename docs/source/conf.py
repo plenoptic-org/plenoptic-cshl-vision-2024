@@ -48,5 +48,4 @@ html_theme_options = {
         "binderhub_url": "https://binder.flatironstitute.org/~wbroderick/cshl2024",
         "notebook_interface": "jupyterlab",
     },
-    "article_footer_items": ["last-updated", "execute"],
 }
