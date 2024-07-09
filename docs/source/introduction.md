@@ -29,8 +29,7 @@ We're going to build up in complexity, starting with the Gaussian model at the t
 
 - `Gaussian`: the model just convolves a Gaussian with an image, so that the model's representation is simply a blurry version of the image.
 - `CenterSurround`: the model convolves a difference-of-Gaussian filter with the image, so that model's representation is bandpass, caring mainly about frequencies that are neither too high or too low.
-- `LinearNonlinear`: the model takes the output of the `CenterSurround` model and rectifies it using the "softplus" function, setting all negative values to 0.
-- `LuminanceGainControl`: the model normalizes the linear component of the response using a local measure of luminance, so that the response is invariant to changes in luminance.
+- `LuminanceGainControl`: the model rectifies and normalizes the linear component of the response using a local measure of luminance, so that the response is invariant to local changes in luminance.
 
 ## Plenoptic basics
 
@@ -132,7 +131,7 @@ matched_im = metamer.synthesize(store_progress=True, max_iter=150)
 After synthesis runs, we can examine the loss over time. There's a convenience function for this, but you could also call `plt.semilogy(metamer.losses)` to create it yourself.
 
 ```{code-cell} ipython3
-po.synthesize.metamer.plot_loss(metamer)
+po.synthesize.metamer.plot_loss(metamer);
 ```
 
 The loss decreases steadily and has reached a very low value. In fact, based on our convergence criterion (one of the optional arguments), it looks as though we've converged (we could change this argument to continue synthesis).
@@ -184,7 +183,7 @@ Let's double-check that our synthesis looks like it's reached a good solution by
 
 ```{code-cell} ipython3
 po.synthesize.metamer.plot_loss(metamer_curie)
-po.synthesize.metamer.plot_loss(metamer_pink)
+po.synthesize.metamer.plot_loss(metamer_pink);
 ```
 
 Good, now let's examine our synthesized metamer and the model output for all our initial images:
@@ -375,31 +374,31 @@ cs_curie_eig.synthesize();
 po.imshow(cs_curie_eig.eigendistortions, title=['CenterSurround Maximum \neigendistortion (on Curie)', 
                                                 'CenterSurround Minimum \neigendistortion (on Curie)']);
 po.imshow(cs_eig.eigendistortions, title=['CenterSurround Maximum \neigendistortion (on Einstein)', 
-                                          'CenterSurround Minimum \neigendistortion (on Einstein)'])
+                                          'CenterSurround Minimum \neigendistortion (on Einstein)']);
 ```
 
-In both cases, the `LuminanceGainControl` maximum distortion is placed in a dark patch of the image, as can be seen more explicitly when we add them (we're multiplying the eigendistortions by 3 to make them more obvious):
+We've plotted the `CenterSurround` eigendistortions for comparison and we can see that, while they're not identical, they look essentially the same, regardless of the image: bandpass unoriented noisy patterns for the maximum distortion and the same pattern at a higher frequency for the minimum. The `LuminanceGainControl` eigendistortions, by comparison, vary based on the image. They are, however, consistent with each other: in both cases, the `LuminanceGainControl` maximum distortion is placed in a dark patch of the image, as can be seen more explicitly when we add them (we're multiplying the eigendistortions by 3 to make them more obvious):
 
 ```{code-cell} ipython3
 # the [:1] is a trick to get only the first element while still being a 4d
 # tensor
 po.imshow([img+3*lg_eig.eigendistortions[:1],
-           curie+3*lg_curie_eig.eigendistortions[:1]])
+           curie+3*lg_curie_eig.eigendistortions[:1]]);
 ```
 
 We can see that this exact placement matters by seeing what happens when we translate the eigendistortion on the Einstein image so it lies on his tie instead of in the dark part of the image:
 
 ```{code-cell} ipython3
-po.imshow(img+lg_eig.eigendistortions[:1].roll(128, -1))
-print(po.tools.l2_norm(lg(img), lg(img+lg_eig.eigendistortions[:1])))
-po.tools.l2_norm(lg(img), lg(img+lg_eig.eigendistortions[:1].roll(128, -1)))
+po.imshow(img+3*lg_eig.eigendistortions[:1].roll(128, -1))
+print(f"Max LG eigendistortion: {po.tools.l2_norm(lg(img), lg(img+lg_eig.eigendistortions[:1]))}")
+print(f"Shifted max LG eigendistortion: {po.tools.l2_norm(lg(img), lg(img+lg_eig.eigendistortions[:1].roll(128, -1)))}")
 ```
 
 While translating the eigendistortion for the `CenterSurround` model has no effect:
 
 ```{code-cell} ipython3
-print(po.tools.l2_norm(center_surround(img), center_surround(img+cs_eig.eigendistortions[:1])))
-po.tools.l2_norm(center_surround(img), center_surround(img+cs_eig.eigendistortions[:1].roll(128, -1)))
+print(f"Max CenterSurround eigendistortion: {po.tools.l2_norm(center_surround(img), center_surround(img+cs_eig.eigendistortions[:1]))}")
+print(f"Shifted max CenterSurround eigendistortion: {po.tools.l2_norm(center_surround(img), center_surround(img+cs_eig.eigendistortions[:1].roll(128, -1)))}")
 ```
 
 We can thus see that the addition of gain control qualitatively changes the sensitivities of the model, making it less sensitive to the local luminance (as seen with the model metamers) but more sensitive to contrast, so that the placement of the distortions have a large effect on the size of their effect.
