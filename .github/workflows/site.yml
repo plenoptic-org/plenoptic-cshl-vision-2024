@@ -38,6 +38,7 @@ jobs:
       run: |
         cd docs
         # always print full traceback
+        bash ./scripts/strip_text.sh
         make html O="-T"
 
     - name: Upload artifact
