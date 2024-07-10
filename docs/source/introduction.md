@@ -11,9 +11,23 @@ kernelspec:
   name: python3
 ---
 
+:::{admonition} Download
+:class: important
+
+This notebook can be downloaded as **{nb-download}`introduction.ipynb`**. See the button at the top right to download as markdown or pdf.
+
+:::
+
 # Introduction
 
 The goal of this notebook is to give a brief introduction to plenoptic: we'll use two of our synthesis methods with a handful of models, and try to step through the kind of scientific reasoning that plenoptic's synthesis methods facilitate. If you're interested in learning more about this, ask me questions or [check out our documentation](https://plenoptic.readthedocs.io)!
+
+:::{admonition} Questions
+:class: important
+
+Throughout this notebook, there will be several questions that look like this. You are encouraged to stop and think about the question, to try and answer it yourself (perhaps looking at the hints that follow) before moving on and reading the answer below it.
+
+:::
 
 As described in my presentation, the goal of plenoptic is to provide methods for model-based synthesis of stimuli, facilitating better understanding of how the models make sense of those stimuli: what information is discarded, what is important, etc. These methods have mostly been used on images, which we'll use here, but they also work well on sounds as well.
 
@@ -147,6 +161,18 @@ fig = po.imshow([img, rep, metamer.metamer, model(metamer.metamer)],
 
 We can see that, even though the target and synthesized images look very different, the two model outputs look basically identical (which matches the exceedingly low loss value we see above). (The left column shows the images and the right column the model outputs; top row shows the original image and bottom the synthesized metamer.)
 
+:::{admonition} Question
+:class: important
+
+Why does the model metamer look "staticky"?
+:::
+
+:::{admonition} Hint
+:class: hint dropdown
+
+Model metamers help us examine the model's nullspace, its invariances. A Gaussian is a lowpass filter, so what information is it insensitive to?
+:::
+
 It may seem strange that the synthesized image looks like it has high-frequency noise in it --- a Gaussian is a low-pass filter, so why isn't the model metamer just a blurred version of the original image? Indeed, such a blurred image would be a model metamer, but it's only one of many. Remember what we mentioned earlier: Gaussians are insensitive to high-frequency information, which not only means that their response doesn't change when you remove that information, but that you can put any amount of high frequency information into an image without affecting the model's output. Put another way, you can randomize the contents of the model's null space without affecting its response, and the goal of metamer synthesis is to generate different images that do just that.
 
 We can also view a movie of our progress so far.
@@ -222,7 +248,7 @@ We can see they make sense: the most noticeable distortion is a very low-frequen
 
 ## A more complex model
 
-Now we feel pretty confident that we understand how a simple Gaussian works, what happens when we make the model more complicated? Let's try changing the filter from a simple lowpass to a bandpass filter, more like the type found in the early human visual system. To do this, we'll use plenoptic's built-in `CenterSurround` object:
+Now we feel pretty confident that we understand how a simple Gaussian works, what happens when we make the model more complicated? Let's try changing the filter from a simple lowpass to a bandpass filter, which have sensitivities more similar to those of neurons in the early human visual system. To do this, we'll use plenoptic's built-in `CenterSurround` object:
 
 ```{code-cell} ipython3
 # These values come from Berardino et al., 2017.
@@ -232,6 +258,14 @@ po.tools.remove_grad(center_surround)
 center_surround.eval()
 center_surround(img).shape
 ```
+
+Before synthesizing our metamers, let's look at the model representation:
+
+```{code-cell} ipython3
+po.imshow([img, center_surround(img)]);
+```
+
+While the Gaussian model above was lowpass, throwing away high frequencies and preserving the low, the Center-Surround model is bandpass. It is thus most sensitive to frequencies found in the middle, and less sensitive to both high and low frequencies[^bandpass]. We can see that in the figure above because the image looks "sharper" than the Gaussian representation (showing that it contains more high frequencies) while also being an overall "mean gray" (showing that it is discarding the low frequencies that account for making portions of the image dark or light).
 
 We can make use of multi-batch processing in order to synthesize the metamers with different start points, as above, using a single `Metamer` object:
 
@@ -244,9 +278,10 @@ cs_metamer = po.synthesize.Metamer(img.repeat(3, 1, 1, 1), center_surround, init
 cs_metamer.synthesize(1000, stop_criterion=1e-7)
 ```
 
-Now let's visualize our outputs:
+Now let's visualize our outputs (the code to create this plot is slightly annoying, so we're hiding it):
 
 ```{code-cell} ipython3
+:tags: [hide-input]
 # this requires a little reorganization of the tensors:
 to_plot = [torch.cat([torch.ones_like(img), img, center_surround(img)])]
 for i, j in zip(init_img, cs_metamer.metamer):
@@ -268,15 +303,21 @@ for ax in fig.axes:
     ax.set_title('\n'.join(title))
 ```
 
-The layout of the plots here is the same as before: the top row shows our target image and its model representation, while the next rows each show a separate model metamer in the middle column, with their different initial points in the left column and their model representations on the right. We can see that the model representation in each row looks the same, while the middle columns look very different. These look reasonably similar to the metamers of the `Gaussian` model: a somewhat blurry Einstein with some additional info riding on top.
+The layout of the plots here is the same as before: the top row shows our target image and its model representation, while the next rows each show a separate model metamer in the middle column, with their different initial points in the left column and their model representations on the right. We can see that the model representation in each row looks the same, while the middle columns look very different. 
 
-But if we look carefully, we can notice some important differences:
+:::{admonition} Question
+:class: important
+
+How do these model metamers differ from the Gaussian ones? How does that relate to what we know about the model's sensitivities and invariances?
+:::
+
+While these model metamers look reasonably similar to the metamers of the `Gaussian` model, a somewhat blurry Einstein with some additional info riding on top, if we look carefully, we can notice some important differences:
 
 - in the white noise metamer, the mean values appear to be different: the dark side of the room on the left side of the picture, as well as his suit, appear to be lighter.
 - whereas the `Gaussian` pink noise metamer just appeared to be blurry, the `CenterSurround` one has dark and light patches that roughly match up with the original noise seed.
 - the differences are most striking in the Curie metamer, as the initial image was completely black except for Marie Curie's face, which is fairly white. The resulting metamer, therefore, is much darker than the target everywhere except the center of the image, which is much brighter.
 
-In all of these, the differences are the result of the fact that our model now consists of a difference-of-Gaussians filter than a Gaussian. This results in a model with *bandpass* selectivity, rather than *lowpass*. Thus, the `CenterSurround` doesn't care about low frequency information like the local mean pixel value and we can change it without affecting its output[^bandpass].
+In all of these, the differences are the result of the fact that our model now consists of a [difference-of-Gaussians filter](https://en.wikipedia.org/wiki/Difference_of_Gaussians) than a Gaussian. As described earlier, this results in a model with *bandpass* selectivity, rather than *lowpass*. Thus, the `CenterSurround` doesn't care about low frequency information like the local mean pixel value and we can change it without affecting its output[^bandpass].
 
 [^bandpass]: The `CenterSurround` model does retain some sensitivity to lower frequencies, but it's much less sensitive to them than the `Gaussian` model is. The `CenterSurround` retains some low frequency selectivity because its two Gaussians are not perfectly balanced; to play around with their balance, try changing the `amplitude_ratio` argument.
 
@@ -327,7 +368,12 @@ Now let's go ahead and synthesize and visualize metamers for this model. This wi
 lg_metamer = po.synthesize.Metamer(img.repeat(3, 1, 1, 1), lg, initial_image=init_img)
 opt = torch.optim.Adam([lg_metamer.metamer], .007, amsgrad=True)
 lg_metamer.synthesize(3500, stop_criterion=1e-11, optimizer=opt)
+```
 
+And let's visualize our results:
+
+```{code-cell} ipython3
+:tags: [hide-input]
 # this requires a little reorganization of the tensors:
 to_plot = [torch.cat([torch.ones_like(img), img, center_surround(img)])]
 for i, j in zip(init_img, lg_metamer.metamer):
@@ -359,6 +405,18 @@ lg_eig.synthesize();
 po.imshow(lg_eig.eigendistortions, title=['Maximum eigendistortion', 
                                           'Minimum eigendistortion']);
 ```
+
+:::{admonition} Question
+:class: important
+
+How do these eigendistortions compare to that of the `CenterSurround` model? Why do they, especially the maximum eigendistortion, look more distinct from those of the `CenterSurround` model than the metamers do?
+:::
+
+:::{admonition} Hint
+:class: hint dropdown
+
+The maximum eigendistortion emphasizes what the model is *most* sensitive to (whereas metamers focus on model invariances), so what about the `LinearGainControl` model's nonlinearities would cause this change?
+:::
 
 Again, the minimum eigendistortion looks fairly similar to before, but now our maximum eigendistortion looks quite different: it's a series of black and white stripes at defined location and orientation. This is a slightly subtle point: without gain control, the simple convolutional models we were investigating view changes everywhere in the image as equivalent and, therefore, a good strategy is to spread out the changes across the whole image. Now, however, gain control means that the model gives different outputs to the same frequency content depending on the local luminance; thus, it matters whether the distortion is placed in a dark or light portion of the image.
 
@@ -407,4 +465,4 @@ We can thus see that the addition of gain control qualitatively changes the sens
 
 In this notebook, we saw the basics of using `plenoptic` to investigate the sensitivities and invariances of some simple convolutional models, and reasoned through how the model metamers and eigendistortions we saw enable us to understand how these models process images.
 
-`plenoptic` includes a variety of models and model components in the [plenoptic.simulate](https://plenoptic.readthedocs.io/en/latest/api/plenoptic.simulate.html) module, and you can (and should!) use the synthesis methods with your own models. Our documentation also has [examples]((https://plenoptic.readthedocs.io/en/latest/tutorials/applications/Demo_Eigendistortion.html)) showing how to use models from torchvision with plenoptic. In order to use your own models with plenoptic, check the [documentation](https://plenoptic.readthedocs.io/en/latest/models.html) for the specific requirements, and use the [`validate_model`](https://plenoptic.readthedocs.io/en/latest/api/plenoptic.tools.html#plenoptic.tools.validate.validate_model) function to check compatibility. If you have issues or want feedback, we're happy to help --- just post on the [Github discussions page](https://github.com/LabForComputationalVision/plenoptic/discussions)!
+`plenoptic` includes a variety of models and model components in the [plenoptic.simulate](https://plenoptic.readthedocs.io/en/latest/api/plenoptic.simulate.html) module, and you can (and should!) use the synthesis methods with your own models. Our documentation also has [examples](https://plenoptic.readthedocs.io/en/latest/tutorials/applications/Demo_Eigendistortion.html) showing how to use models from [torchvision](https://pytorch.org/vision/stable/index.html) (which contains a variety of pretrained neural network models) with plenoptic. In order to use your own models with plenoptic, check the [documentation](https://plenoptic.readthedocs.io/en/latest/models.html) for the specific requirements, and use the [`validate_model`](https://plenoptic.readthedocs.io/en/latest/api/plenoptic.tools.html#plenoptic.tools.validate.validate_model) function to check compatibility. If you have issues or want feedback, we're happy to help --- just post on the [Github discussions page](https://github.com/LabForComputationalVision/plenoptic/discussions)!

@@ -5,6 +5,7 @@ plenoptic @ git+https://github.com/LabForComputationalVision/plenoptic.git@front
 sphinx-book-theme
 myst-parser
 sphinx-copybutton
+sphinx-togglebutton
 ipywidgets
 jupyter
 jupytext
