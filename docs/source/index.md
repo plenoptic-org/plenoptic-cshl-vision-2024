@@ -4,4 +4,5 @@ We will do many impressive things, I think
 
 ```{toctree}
 introduction.md
+introduction-stripped.md
 ```

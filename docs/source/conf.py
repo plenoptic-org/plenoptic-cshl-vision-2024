@@ -34,6 +34,7 @@ html_static_path = ['_static']
 html_css_files = ['custom.css']
 html_favicon = '_static/plenoptic.ico'
 html_sourcelink_suffix = ""
+myst_enable_extensions = ["colon_fence"]
 html_theme_options = {
     "home_page_in_toc": True,
     "github_url": "https://github.com/LabForComputationalVision/plenoptic-cshl-vision-2024",
@@ -45,8 +46,12 @@ html_theme_options = {
     },
     "use_download_button": True,
     "use_repository_button": True,
-    "launch_buttons": {
-        "binderhub_url": "https://binder.flatironstitute.org/~wbroderick/cshl2024",
-        "notebook_interface": "jupyterlab",
-    },
+    "icon_links": [
+        {
+            "name": "Binder",
+            "url": "https://binder.flatironinstitute.org/~wbroderick/cshl2024",
+            "type": "url",
+            "icon": "https://mybinder.org/badge_logo.svg",
+        },
+    ],
 }
