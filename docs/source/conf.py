@@ -52,7 +52,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Binder",
-            "url": "https://binder.flatironinstitute.org/~wbroderick/cshl2024",
+            "url": "https://binder.flatironinstitute.org/v2/user/wbroderick/cshl2024?filepath=introduction-stripped.ipynb",
             "type": "url",
             "icon": "https://mybinder.org/badge_logo.svg",
         },
