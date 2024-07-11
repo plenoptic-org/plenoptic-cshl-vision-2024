@@ -28,6 +28,9 @@ exclude_patterns = []
 
 # max time (in secs) per notebook cell. here, we disable this
 nb_execution_timeout = -1
+# we have two versions of each notebook, one with explanatory text and one without
+# (which ends in `-stripped.md`). we don't need to run both of them
+nb_execution_excludepatterns = ['*stripped*']
 nb_execution_raise_on_error = True
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']

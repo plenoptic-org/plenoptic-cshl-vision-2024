@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#
-# Remove text that's
+
+set -euo pipefail
 
 HEADER="---
 jupytext:
@@ -15,8 +15,15 @@ kernelspec:
   name: python3
 ---
 "
+STRIP_TEXT_EXPLAIN="
+This notebook has had all its explanatory text removed and has not been run.
+ It is intended to be downloaded and run locally (or on the provided binder)
+ while listening to the presenter's explanation. In order to see the fully
+ rendered of this notebook, go [here]" # and then we add the link below
+
 # \-escape the newlines for use in Sed.
 HEADER=${HEADER//$'\n'/\\$'\n'}
+STRIP_TEXT_EXPLAIN=${STRIP_TEXT_EXPLAIN//$'\n'/\\$'\n'}
 
 for f in docs/source/*md; do
 
@@ -26,9 +33,13 @@ for f in docs/source/*md; do
     fi
 
     out_f="${f/.md/-stripped.md}"
+    md="$(basename $f)"
+    ipynb="${md/.md/.ipynb}"
+    stripped_ipynb="${ipynb/.ipynb/-stripped.ipynb}"
     TITLE="$(grep '^# ' $f | head -1)"
     sed -E -n -e '/^#/p' -e '/\{code-cell\}|:::/,/```|:::/p' "$f" > "$out_f"
-    sed -i "s/${TITLE}/${TITLE}, Text Removed\n/g" "$out_f"
+    sed -i "s/${ipynb}/${stripped_ipynb}/g" "$out_f"
+    sed -i "s/${TITLE}/${TITLE}, Text Removed\n${STRIP_TEXT_EXPLAIN}(${md})\n/g" "$out_f"
     sed -i "1s/^/${HEADER}/g" "$out_f"
 
 done

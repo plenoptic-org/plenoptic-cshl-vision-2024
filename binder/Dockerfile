@@ -17,6 +17,7 @@ RUN adduser --disabled-password \
 COPY . ${HOME}
 RUN pip3 install jupyterlab notebook jupyterhub
 RUN pip3 install -r ${HOME}/plenoptic-cshl-vision-2024/requirements.txt
+RUN python3 ${HOME}/scripts/setup.py
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}

@@ -7,5 +7,8 @@ myst-parser
 sphinx-copybutton
 sphinx-togglebutton
 ipywidgets
-jupyter
+requests
+click
 jupytext
+jupyterlab_myst
+jupyter
