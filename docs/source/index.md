@@ -32,6 +32,14 @@ While we'll use the binder during this tutorial, if you'd like to run the notebo
     cd plenoptic-cshl-vision-2024
     pip install -r requirements.txt
     ```
+
+    :::{important}
+    You will also need `ffmpeg` installed in order to view the videos in the notebook. This is likely installed on your system already if you are on Linux or Mac (run `ffmpeg` in your command line to check). If not, you can install it via conda: `conda install -c conda-forge ffmpeg` or see their [install instructions](https://ffmpeg.org/download.html).
+    
+    If you have `ffmpeg` installed and are still having issues, try running `conda update ffmpeg`.
+    
+    :::
+    
 5. Run the setup script to prepare the notebook:
    ```shell
    python scripts/setup.py
@@ -52,9 +60,9 @@ Some usage notes:
 
 - You are only allowed to have a single binder instance running at a time, so if you get the "already have an instance running error", go to the [binderhub page](https://binder.flatironinstitute.org/hub/hub/home) (or click on "check your currently running servers" on the right of the page) to join your running instance.
 - If you lose connection halfway through the workshop, go to the [binderhub page](https://binder.flatironinstitute.org/hub/hub/home) to join your running instance rather than restarting the image.
-- This is important because if you restart the image, **you will lose all data and progress**. If this happens, see [this page](https://flatironinstitute.github.io/ccn-software-fens-2024/generated/just_code/) for notebooks that have the code to copy.
+- This is important because if you restart the image, **you will lose all data and progress**.
 - The binder will be shutdown automatically after 1 day of inactivity or 7 days of total usage. Data will not persist after the binder instance shuts down, so **please download any notebooks** you want to keep.
-- I will destroy this instance in 2 weeks, so that you can use it to play around during the course. You can download your notebooks to keep them after the fact.
+- I will destroy this instance in 2 weeks, so that you can use it to play around during the course. You can download your notebooks to keep them after the fact. If you do so, see the [setup instructions](#setup) for how to create the environment for running them locally, and let me know if you have any problems!
 
 ## Contents
 

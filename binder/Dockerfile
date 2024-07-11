@@ -1,7 +1,7 @@
 FROM --platform=linux/amd64 pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y python3-dev python3-pip
+RUN apt update && apt install -y python3-dev python3-pip git-all
 
 # to get docker image working for binder
 ARG NB_USER=jovyan
@@ -17,8 +17,9 @@ RUN adduser --disabled-password \
 COPY . ${HOME}
 RUN pip3 install jupyterlab notebook jupyterhub
 RUN pip3 install -r ${HOME}/plenoptic-cshl-vision-2024/requirements.txt
-RUN python3 ${HOME}/scripts/setup.py
+RUN python3 ${HOME}/plenoptic-cshl-vision-2024/scripts/setup.py
+RUN conda update ffmpeg
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
-WORKDIR ${HOME}
+WORKDIR ${HOME}/plenoptic-cshl-vision-2024
