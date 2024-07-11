@@ -36,6 +36,7 @@ jobs:
 
     - name: Build site
       run: |
+        bash ./scripts/strip_text.sh
         cd docs
         # always print full traceback
         make html O="-T"
