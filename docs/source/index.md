@@ -2,6 +2,8 @@
 
 This site hosts the example notebook used for the plenoptic tutorial given at the Cold Spring Harbor Labs Computational Neuroscience: Vision course in July 2024. This one-hour(ish) tutorial aims to introduce the basics of using plenoptic in order to better understand computational visual models with simple examples. We hope to explain not just `plenoptic`'s syntax but also the type of reasoning that it facilitates.
 
+The presentation I gave at the beginning of this session can be found [here](https://labforcomputationalvision.github.io/plenoptic_presentations/2024-07-12_CSHL/slides.html).
+
 This website contains two versions of the notebook we'll use today: [with](introduction.md) and [without](introduction-stripped.md) explanatory text. Today you'll run the version without explanatory text, which contains cells of code, while listening to my description. If later you wish to revisit this material, the version with explanatory text should help you.
 
 You may also find the [glossary](glossary.md) useful as you go through the notebook.
