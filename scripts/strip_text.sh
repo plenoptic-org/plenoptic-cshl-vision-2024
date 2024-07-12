@@ -28,7 +28,7 @@ STRIP_TEXT_EXPLAIN=${STRIP_TEXT_EXPLAIN//$'\n'/\\$'\n'}
 for f in docs/source/*md; do
 
     # don't do this on index or if we've already removed text
-    if [[ "$f" =~ "index" || "$f" =~ "stripped" ]]; then
+    if [[ "$f" =~ "index" || "$f" =~ "stripped" || "$f" =~ "glossary" ]]; then
         continue
     fi
 
@@ -41,5 +41,8 @@ for f in docs/source/*md; do
     sed -i "s/${ipynb}/${stripped_ipynb}/g" "$out_f"
     sed -i "s/${TITLE}/${TITLE}, Text Removed\n${STRIP_TEXT_EXPLAIN}(${md})\n/g" "$out_f"
     sed -i "1s/^/${HEADER}/g" "$out_f"
+    cp "$out_f" tmp.md
+    uniq tmp.md > "$out_f"
+    rm tmp.md
 
 done
