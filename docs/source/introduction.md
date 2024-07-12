@@ -150,6 +150,14 @@ po.synthesize.metamer.plot_loss(metamer);
 
 The loss decreases steadily and has reached a very low value. In fact, based on our convergence criterion (one of the optional arguments), it looks as though we've converged (we could change this argument to continue synthesis).
 
+We can also view a movie of our synthesis progress:
+
+```{code-cell} ipython3
+po.tools.convert_anim_to_html(po.synthesize.metamer.animate(metamer, included_plots=['display_metamer', 'plot_loss'], figsize=(12, 5)))
+```
+
+In the above, we see that we start with white noise, and gradually update the pixel values so as to make the model's representation of this image the same as that of our target Einstein image.
+
 We can then look at the reference and metamer images, as well as the model's outputs on the two images:
 
 ```{code-cell} ipython3
@@ -174,12 +182,6 @@ Model metamers help us examine the model's nullspace, its invariances. A Gaussia
 :::
 
 It may seem strange that the synthesized image looks like it has high-frequency noise in it --- a Gaussian is a low-pass filter, so why isn't the model metamer just a blurred version of the original image? Indeed, such a blurred image would be a model metamer, but it's only one of many. Remember what we mentioned earlier: Gaussians are insensitive to high-frequency information, which not only means that their response doesn't change when you remove that information, but that you can put any amount of high frequency information into an image without affecting the model's output. Put another way, you can randomize the contents of the model's null space without affecting its response, and the goal of metamer synthesis is to generate different images that do just that.
-
-We can also view a movie of our progress so far.
-
-```{code-cell} ipython3
-po.tools.convert_anim_to_html(po.synthesize.metamer.animate(metamer, included_plots=['display_metamer', 'plot_loss'], figsize=(12, 5)))
-```
 
 We can see the model's insensitivity to high frequencies more dramatically by initializing our metamer synthesis with a different image. By default, we initialize with a patch of white noise, but we can initialize with any image of the same size. Let's try with two different images, a sample of pink noise and a picture of Marie Curie.
 
@@ -244,7 +246,12 @@ po.imshow(eig.eigendistortions, title=['Maximum eigendistortion',
                                        'Minimum eigendistortion']);
 ```
 
-We can see they make sense: the most noticeable distortion is a very low-frequency modification to the image, with a period of about half the image. The least noticeable, on the other hand, is very high-frequency, which matches our understanding from the metamer example above.
+We can see they make sense: the most noticeable distortion is a very low-frequency modification to the image, with a period of about half the image. The least noticeable, on the other hand, is very high-frequency, which matches our understanding from the metamer example above. This is clearer if we add them to our Einstein in order to view them together:
+
+```{code-cell} ipython3
+po.imshow(img + 3*eig.eigendistortions, title=['Maximum eigendistortion', 
+                                               'Minimum eigendistortion']);
+```
 
 ## A more complex model
 
