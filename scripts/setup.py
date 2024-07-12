@@ -5,7 +5,7 @@ import pathlib
 import requests
 import subprocess
 
-NB_DOWNLOAD_URL = "https://labforcomputationalvision.github.io/plenoptic-cshl-vision-2024/_downloads/6ffa5feaee419204975763026b9ef211/introduction-stripped.ipynb"
+NB_DOWNLOAD_URL = "https://labforcomputationalvision.github.io/plenoptic-cshl-vision-2024/_downloads/dbf6e61da9e91ccf52bab94fae2ee5d8/introduction-stripped.ipynb"
 NB_URL = "https://labforcomputationalvision.github.io/plenoptic-cshl-vision-2024/introduction-stripped.html"
 
 def download_notebook():
