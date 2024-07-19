@@ -58,6 +58,10 @@ import pyrtools as pt
 import matplotlib.pyplot as plt
 # so that relative sizes of axes created by po.imshow and others look right
 plt.rcParams['figure.dpi'] = 72
+plt.rcParams['animation.html'] = 'html5'
+# use single-threaded ffmpeg for animation writer
+plt.rcParams['animation.writer'] = 'ffmpeg'
+plt.rcParams['animation.ffmpeg_args'] = ['-threads', '1']
 
 %matplotlib inline
 
@@ -182,7 +186,7 @@ This next cell will take a while to run --- making animations in matplotlib is a
 </div>
 
 ```{code-cell} ipython3
-po.tools.convert_anim_to_html(po.synthesize.metamer.animate(metamer, included_plots=['display_metamer', 'plot_loss'], figsize=(12, 5)))
+po.synthesize.metamer.animate(metamer, included_plots=['display_metamer', 'plot_loss'], figsize=(12, 5))
 ```
 
 In the above, we see that we start with white noise, and gradually update the pixel values so as to make the model's representation of this image the same as that of our target Einstein image.
