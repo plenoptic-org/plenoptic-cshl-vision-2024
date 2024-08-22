@@ -21,7 +21,7 @@ While we'll use the binder during this tutorial, if you'd like to run the notebo
 0. Make sure you have `git` installed. It is installed by default on most Mac and Linux machines, but you may need to install it if you are on Windows. [These instructions](https://github.com/git-guides/install-git) should help.
 1. Clone the github repo for this tutorial:
    ```shell
-   git clone https://github.com/LabForComputationalVision/plenoptic-cshl-vision-2024.git
+   git clone https://github.com/plenoptic-org/plenoptic-cshl-vision-2024.git
    ```
 2. Create a new python 3.11 virtual environment. If you do not have a preferred way of managing your python virtual environments, we recommend [miniconda](https://docs.anaconda.com/free/miniconda/). After installing it (if you have not done so already), run 
     ```shell

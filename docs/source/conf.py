@@ -16,7 +16,7 @@ author = 'Billy Broderick'
 extensions = [
     'myst_nb',
     'sphinx_copybutton',
-    'sphinx_togglebutton',
+    # 'sphinx_togglebutton',
 ]
 
 templates_path = ['_templates']
@@ -30,9 +30,9 @@ exclude_patterns = []
 nb_execution_timeout = -1
 # we have two versions of each notebook, one with explanatory text and one without
 # (which ends in `-stripped.md`). we don't need to run both of them
-nb_execution_excludepatterns = ['*stripped*']
+nb_execution_excludepatterns = ['*stripped*', 'intro*']
 nb_execution_raise_on_error = True
-html_theme = 'sphinx_book_theme'
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 html_css_files = ['custom.css']
 html_favicon = '_static/plenoptic.ico'
@@ -40,8 +40,8 @@ html_sourcelink_suffix = ""
 myst_enable_extensions = ["colon_fence"]
 html_theme_options = {
     "home_page_in_toc": True,
-    "github_url": "https://github.com/LabForComputationalVision/plenoptic-cshl-vision-2024",
-    "repository_url": "https://github.com/LabForComputationalVision/plenoptic-cshl-vision-2024",
+    "github_url": "https://github.com/plenoptic-org/plenoptic-cshl-vision-2024",
+    "repository_url": "https://github.com/plenoptic-org/plenoptic-cshl-vision-2024",
     "logo": {
         "alt_text": "Home",
         "image_light": "_static/plenoptic.svg",
