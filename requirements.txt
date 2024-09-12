@@ -1,7 +1,7 @@
 sphinx
 myst-nb
 Pillow
-plenoptic @ git+https://github.com/plenoptic-org/plenoptic.git@frontend_params
+plenoptic @ git+https://github.com/plenoptic-org/plenoptic.git
 sphinx-book-theme
 myst-parser
 sphinx-copybutton
