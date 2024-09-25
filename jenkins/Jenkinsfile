@@ -30,8 +30,8 @@ pipeline {
            '''
       }
     }
-    lock('plenoptic_workshop_publish') {
-      stage('publish') {
+    stage('publish') {
+      lock('plenoptic_workshop_publish') {
         agent {
           dockerfile {
             dir 'jenkins'
