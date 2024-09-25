@@ -30,7 +30,7 @@ pipeline {
            '''
       }
     }
-    lock('workshop_publish') {
+    lock('plenoptic_workshop_publish') {
       stage('publish') {
         agent {
           dockerfile {
