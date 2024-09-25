@@ -45,12 +45,12 @@ pipeline {
         def docs_dir = "${project_name}/${env.BRANCH_NAME}"
         def commit = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
         steps {
-          sh "echo $(pwd)"
-          sh "echo $(ls)"
-          sh "echo $(ls $HOME)"
+          sh "echo \$(pwd)"
+          sh "echo \$(ls)"
+          sh "echo \$(ls $HOME)"
           sh "rm -rf ${docs_dir}"
-          sh "cp -rp $HOME/docs/build/html ${docs_dir}"
-          sh "echo $(ls ${docs_dir})"
+          sh "cp -rp \$HOME/docs/build/html ${docs_dir}"
+          sh "echo \$(ls ${docs_dir})"
           // sh "git add -A ${docs_dir}"
           // sh "git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'"
           // sh "git push origin main"
