@@ -42,7 +42,7 @@ pipeline {
       steps {
         lock('plenoptic_workshop_publish') {
           sh "docs_dir=\$project_name/${env.BRANCH_NAME}"
-          sh "commit=git rev-parse HEAD"
+          sh "commit=\$(git rev-parse HEAD)"
           sh "echo \$(pwd)"
           sh "echo \$(ls)"
           sh "echo \$HOME"
