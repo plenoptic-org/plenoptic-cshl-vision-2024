@@ -29,7 +29,8 @@ pipeline {
               make html
            '''
         lock('plenoptic_workshop_publish') {
-          sh "docs_dir=\$project_name/pulls/${env.BRANCH_NAME/PR-/}"
+          sh "docs_dir=\$project_name/pulls/${env.BRANCH_NAME}"
+          sh "docs_dir=\${docs_dir/PR-/}"
           sh "commit=\$(git rev-parse HEAD)"
           sh "echo \$(pwd)"
           sh "echo \$(ls docs)"
