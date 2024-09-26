@@ -16,6 +16,7 @@ pipeline {
       environment {
         HOME = pwd(tmp:true)
         OMP_NUM_THREADS = 4
+        project_name = "cshl-vision-2024"
       }
       steps {
         sh 'python3.11 -m venv --system-site-packages $HOME'
@@ -27,32 +28,17 @@ pipeline {
               cd docs
               make html
            '''
-      }
-    }
-    stage('publish') {
-      agent {
-        dockerfile {
-          dir 'jenkins'
-        }
-      }
-      environment {
-        HOME = pwd(tmp:false)
-        project_name = "cshl-vision-2024"
-      }
-      steps {
         lock('plenoptic_workshop_publish') {
-          sh "docs_dir=\$project_name/${env.BRANCH_NAME}"
+          sh "docs_dir=\$project_name/pulls/${env.BRANCH_NAME/PR-/}"
           sh "commit=\$(git rev-parse HEAD)"
           sh "echo \$(pwd)"
           sh "echo \$(ls docs)"
           sh "echo \$(ls docs/build)"
-          sh "cd .."
-          sh "echo \$(ls)"
           git branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh"
-          sh "echo \$(ls)"
-          sh "cd plenoptic-workshops"
+          sh "echo \$(pwd)"
           sh "rm -rf \$docs_dir"
-          sh "cp -rp \$HOME/docs/build/html \$docs_dir"
+          sh "mkdir -p \$docs_dir"
+          sh "cp -rp \$HOME/docs/build/html/* \$docs_dir"
           sh "echo \$(ls \$docs_dir)"
           // sh "git add -A ${docs_dir}"
           // sh "git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'"
