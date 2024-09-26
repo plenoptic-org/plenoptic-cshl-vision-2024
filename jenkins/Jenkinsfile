@@ -36,7 +36,7 @@ pipeline {
         }
       }
       environment {
-        HOME = pwd(tmp:true)
+        HOME = pwd(tmp:false)
         project_name = "cshl-vision-2024"
       }
       steps {
@@ -48,7 +48,7 @@ pipeline {
           sh "echo \$HOME"
           sh "echo \$(ls \$HOME)"
           sh "cd .."
-          sh "git clone ssh://git@github.com/plenoptic-org/plenoptic-workshops.git"
+          git branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh"
           sh "cd plenoptic-workshops"
           sh "rm -rf \$docs_dir"
           sh "cp -rp \$HOME/docs/build/html \$docs_dir"
