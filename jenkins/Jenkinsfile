@@ -1,4 +1,3 @@
-def project_name = "cshl-vision-2024"
 pipeline {
   agent none
   options {
@@ -31,26 +30,29 @@ pipeline {
       }
     }
     stage('publish') {
-      lock('plenoptic_workshop_publish') {
-        agent {
-          dockerfile {
-            dir 'jenkins'
-            args '--gpus 1'
-          }
+      agent {
+        dockerfile {
+          dir 'jenkins'
         }
-        environment {
-          HOME = pwd(tmp:true)
-        }
-        git(url: "ssh://git@github.com/plenoptic-org/plenoptic-workshops.git", branch: "main", credentialsId: "ssh", changelog: false)
-        def docs_dir = "${project_name}/${env.BRANCH_NAME}"
-        def commit = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
-        steps {
+      }
+      environment {
+        HOME = pwd(tmp:true)
+        project_name = "cshl-vision-2024"
+      }
+      steps {
+        lock('plenoptic_workshop_publish') {
+          sh "docs_dir=\$project_name/${env.BRANCH_NAME}"
+          sh "commit=git rev-parse HEAD"
           sh "echo \$(pwd)"
           sh "echo \$(ls)"
-          sh "echo \$(ls $HOME)"
-          sh "rm -rf ${docs_dir}"
-          sh "cp -rp \$HOME/docs/build/html ${docs_dir}"
-          sh "echo \$(ls ${docs_dir})"
+          sh "echo \$HOME"
+          sh "echo \$(ls \$HOME)"
+          sh "cd .."
+          sh "git clone ssh://git@github.com/plenoptic-org/plenoptic-workshops.git"
+          sh "cd plenoptic-workshops"
+          sh "rm -rf \$docs_dir"
+          sh "cp -rp \$HOME/docs/build/html \$docs_dir"
+          sh "echo \$(ls \$docs_dir)"
           // sh "git add -A ${docs_dir}"
           // sh "git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'"
           // sh "git push origin main"
