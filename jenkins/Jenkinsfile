@@ -36,8 +36,10 @@ pipeline {
                 rm -rf \$docs_dir
                 mkdir -p \$docs_dir
                 cp -rp docs/build/html/* \$docs_dir
+                git config user.email 'jenkins@flatironinstitute.org'
+                git config user.name 'Flatiron Jenkins'
                 git add -A .
-                git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for \$docs_dir' -m '${env.BUILD_TAG} \$commit'
+                git commit --allow-empty -m 'Generated documentation for \$docs_dir' -m '${env.BUILD_TAG} \$commit'
                 git push origin main
              """
         }
