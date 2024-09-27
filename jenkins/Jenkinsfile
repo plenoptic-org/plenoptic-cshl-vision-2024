@@ -36,6 +36,7 @@ pipeline {
                 rm -rf \$docs_dir
                 mkdir -p \$docs_dir
                 cp -rp docs/build/html/* \$docs_dir
+                cd plenoptic-workshops
                 git config user.email 'jenkins@flatironinstitute.org'
                 git config user.name 'Flatiron Jenkins'
                 git add -A .
