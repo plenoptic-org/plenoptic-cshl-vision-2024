@@ -29,7 +29,7 @@ pipeline {
               make html
            '''
         lock('plenoptic_workshop_publish') {
-          git branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh"
+          git(branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh")
           sh """#!/bin/bash -ex
                 docs_dir=plenoptic-workshops/\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
                 commit=\$(git rev-parse HEAD)
