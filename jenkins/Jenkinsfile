@@ -14,7 +14,7 @@ pipeline {
         }
       }
       environment {
-        HOME = pwd(tmp:true)
+        HOME = pwd(tmp:false)
         OMP_NUM_THREADS = 4
         PROJECT_NAME = "cshl-vision-2024"
       }
@@ -28,19 +28,15 @@ pipeline {
               cd docs
               make html
            '''
-        git(branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh")
         lock('plenoptic_workshop_publish') {
+          git(branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh")
           sh """#!/bin/bash -ex
                 docs_dir=plenoptic-workshops/\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
                 commit=\$(git rev-parse HEAD)
-                echo \$(pwd)
-                echo \$(ls docs)
-                echo \$(ls docs/build)
-                echo \$(pwd)
                 rm -rf \$docs_dir
                 mkdir -p \$docs_dir
-                cp -rp \$HOME/docs/build/html/* \$docs_dir
-                echo \$(ls \$docs_dir)
+                cp -rp docs/build/html/* \$docs_dir
+                ls \$docs_dir
              """
         }
       }
