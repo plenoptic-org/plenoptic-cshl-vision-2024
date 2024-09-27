@@ -41,9 +41,6 @@ pipeline {
                 mkdir -p \$docs_dir
                 cp -rp \$HOME/docs/build/html/* \$docs_dir
                 echo \$(ls \$docs_dir)
-                # git add -A ${docs_dir}
-                # git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'
-                # git push origin main""
              """
         }
       }
