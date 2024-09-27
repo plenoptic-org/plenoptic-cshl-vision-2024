@@ -16,7 +16,7 @@ pipeline {
       environment {
         HOME = pwd(tmp:true)
         OMP_NUM_THREADS = 4
-        project_name = "cshl-vision-2024"
+        PROJECT_NAME = "cshl-vision-2024"
       }
       steps {
         sh 'python3.11 -m venv --system-site-packages $HOME'
@@ -29,8 +29,7 @@ pipeline {
               make html
            '''
         lock('plenoptic_workshop_publish') {
-          sh "docs_dir=\$project_name/pulls/${env.BRANCH_NAME}"
-          sh "docs_dir=\${docs_dir/PR-/}"
+          sh "docs_dir=\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}"
           sh "commit=\$(git rev-parse HEAD)"
           sh "echo \$(pwd)"
           sh "echo \$(ls docs)"
