@@ -29,20 +29,22 @@ pipeline {
               make html
            '''
         lock('plenoptic_workshop_publish') {
-          sh "docs_dir=\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}"
-          sh "commit=\$(git rev-parse HEAD)"
-          sh "echo \$(pwd)"
-          sh "echo \$(ls docs)"
-          sh "echo \$(ls docs/build)"
           git branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh"
-          sh "echo \$(pwd)"
-          sh "rm -rf \$docs_dir"
-          sh "mkdir -p \$docs_dir"
-          sh "cp -rp \$HOME/docs/build/html/* \$docs_dir"
-          sh "echo \$(ls \$docs_dir)"
-          // sh "git add -A ${docs_dir}"
-          // sh "git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'"
-          // sh "git push origin main"
+          sh """#!/bin/bash -ex
+                docs_dir=plenoptic-workshops/\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
+                commit=\$(git rev-parse HEAD)
+                echo \$(pwd)
+                echo \$(ls docs)
+                echo \$(ls docs/build)
+                echo \$(pwd)
+                rm -rf \$docs_dir
+                mkdir -p \$docs_dir
+                cp -rp \$HOME/docs/build/html/* \$docs_dir
+                echo \$(ls \$docs_dir)
+                # git add -A ${docs_dir}
+                # git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m 'Generated documentation for ${docs_dir}' -m '${env.BUILD_TAG} ${commit}'
+                # git push origin main""
+             """
         }
       }
     }
