@@ -44,13 +44,20 @@ pipeline {
         //    '''
         lock('plenoptic_workshop_publish') {
           sh "echo \$(ls)"
+          sh "echo \$(pwd)"
           dir(path: '../plenoptic-workshops') {
             git(branch: 'main', changelog: false, poll: false, url: 'ssh://git@github.com/plenoptic-org/plenoptic-workshops.git', credentialsId: "ssh")
+            sh "echo \$(ls)"
+            sh "echo \$(pwd)"
+            sh "echo \$(ls ..)"
+            sh "echo \$(ls \$HOME)"
             sh """#!/bin/bash -ex
                 DOCS_DIR=\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
                 commit=\$(git rev-parse HEAD)
                 rm -rf \$DOCS_DIR
                 mkdir -p \$DOCS_DIR
+                echo \$(tree .)
+                echo \$(tree \$HOME)
                 cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
                 git add -A .
                 git commit --allow-empty -m 'Generated documentation for \$DOCS_DIR' -m '${env.BUILD_TAG} \$commit'
