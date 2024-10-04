@@ -10,7 +10,8 @@ pipeline {
       agent {
         dockerfile {
           dir 'jenkins'
-          args '--gpus 1'
+          // map volumes so we still have access to output
+          args '--gpus 1 -v $HOME/output:/output'
         }
       }
       environment {
@@ -26,6 +27,7 @@ pipeline {
               python3.11 -c "import torch; print(torch.cuda.current_device())"
               cd docs
               make html
+              cp -r build/html /output
            '''
       }
     }
@@ -50,14 +52,13 @@ pipeline {
             sh "echo \$(ls)"
             sh "echo \$(pwd)"
             sh "echo \$(ls ..)"
-            sh "echo \$(ls \$HOME)"
+            sh "echo \$(ls \$HOME/docs)"
+            sh "echo \$(ls \$HOME/docs/build)"
             sh """#!/bin/bash -ex
                 DOCS_DIR=\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
                 commit=\$(git rev-parse HEAD)
                 rm -rf \$DOCS_DIR
                 mkdir -p \$DOCS_DIR
-                echo \$(tree .)
-                echo \$(tree \$HOME)
                 cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
                 git add -A .
                 git commit --allow-empty -m 'Generated documentation for \$DOCS_DIR' -m '${env.BUILD_TAG} \$commit'
