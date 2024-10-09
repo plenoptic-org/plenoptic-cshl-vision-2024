@@ -10,3 +10,7 @@ RUN apt-get update && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+RUN python3.11 -m venv --system-site-packages /venv
+COPY requirements.txt /venv
+RUN . /venv/bin/activate && pip install -r /venv/requirements.txt
