@@ -6,6 +6,16 @@ pipeline {
     timeout(time: 2, unit: 'HOURS')
   }
   stages {
+    stage('setup_dirs') {
+      agent any
+      environment {
+        HOME = pwd(tmp:false)
+      }
+      steps {
+        sh 'mkdir $HOME/output'
+        sh 'chmod 755 $HOME/output'
+      }
+    }
     stage('build') {
       agent {
         dockerfile {
