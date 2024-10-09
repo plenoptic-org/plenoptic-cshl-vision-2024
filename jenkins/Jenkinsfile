@@ -7,7 +7,7 @@ pipeline {
   }
   stages {
     stage('setup_dirs') {
-      agent any
+      agent jenkins
       environment {
         HOME = pwd(tmp:false)
       }
@@ -21,7 +21,7 @@ pipeline {
         dockerfile {
           dir 'jenkins'
           // map volumes so we still have access to output
-          args '--gpus 1 -v $HOME/output:/output:rw'
+          args '--gpus 1 -v $HOME/output:/output:rw -e UID="$(id -u $USER)" -e GID="$(id -g $USER)"'
         }
       }
       environment {
@@ -30,6 +30,7 @@ pipeline {
       }
       steps {
         sh 'python3.11 -m venv --system-site-packages $HOME'
+        sh 'echo \$(ls \$HOME)'
         sh '''#!/bin/bash -ex
               source $HOME/bin/activate
               pip install -U pip
@@ -42,7 +43,7 @@ pipeline {
       }
     }
     stage('publish') {
-      agent any
+      agent jenkins
       environment {
         HOME = pwd(tmp:false)
         PROJECT_NAME = "cshl-vision-2024"
