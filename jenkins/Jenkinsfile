@@ -11,7 +11,7 @@ pipeline {
         dockerfile {
           dir 'jenkins'
           // map volumes so we still have access to output
-          args '--gpus 1 -v $HOME/output:/output -e LOCAL_UID=$(id -u $USER) -e LOCAL_GID=$(id -g $USER)'
+          args '--gpus 1 -v $HOME/output:/output -e UID=$(id -u $USER) -e GID=$(id -g $USER)'
         }
       }
       environment {
