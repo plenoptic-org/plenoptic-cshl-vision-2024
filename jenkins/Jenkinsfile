@@ -17,7 +17,7 @@ pipeline {
       environment {
         HOME = pwd(tmp:false)
         OMP_NUM_THREADS = 4
-        PROJECT_NAME = "cshl-vision-2024"
+        PROJECT_NAME = "CSHL-vision-course-2024"
       }
       steps {
         sh 'python3.11 -m venv --system-site-packages $HOME'
@@ -34,7 +34,7 @@ pipeline {
             dir(path: 'workshops') {
               checkout(changelog: false, poll: false, scm: scm)
               sh """#!/bin/bash -ex
-                DOCS_DIR=\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
+                DOCS_DIR=workshops/\$PROJECT_NAME/pulls/${env.BRANCH_NAME.replace('PR-', '')}
                 rm -rf \$DOCS_DIR
                 mkdir -p \$DOCS_DIR
                 cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
