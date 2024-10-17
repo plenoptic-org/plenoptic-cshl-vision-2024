@@ -42,11 +42,11 @@ pipeline {
                    out_dir="branch/${env.BRANCH_NAME}"
                 fi
                 DOCS_DIR=workshops/\$PROJECT_NAME/\$out_dir
-                rm -rf \$DOCS_DIR
-                mkdir -p \$DOCS_DIR
-                cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
-                git add -A \$DOCS_DIR
-                GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
+                # rm -rf \$DOCS_DIR
+                # mkdir -p \$DOCS_DIR
+                # cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
+                # git add -A \$DOCS_DIR
+                # GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
              """
               // gitPush(gitScm: scm, targetBranch: 'main', targetRepo: 'origin')
             }
