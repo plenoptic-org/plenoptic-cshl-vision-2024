@@ -36,7 +36,7 @@ pipeline {
               sh """#!/bin/bash -ex
                 if [[ "${env.BRANCH_NAME}" =~ PR ]]; then
                    out_dir="pulls/${env.BRANCH_NAME.replace('PR-', '')}"
-                elif [[ ! -z "${env.TAG_NAME}" ]]; then
+                elif [[ "${env.TAG_NAME}" = null ]]; then
                    out_dir="tags/${env.TAG_NAME}"
                 else
                    out_dir="branch/${env.BRANCH_NAME}"
