@@ -1,0 +1,80 @@
+pipeline {
+  agent none
+  options {
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '8', daysToKeepStr: '20'))
+    timeout(time: 2, unit: 'HOURS')
+  }
+  stages {
+    stage('docs') {
+      agent {
+        dockerfile {
+          dir 'jenkins'
+          // map volumes so we still have access to output
+          args '--gpus 1'
+        }
+      }
+      environment {
+        HOME = pwd(tmp:false)
+        OMP_NUM_THREADS = 4
+        PROJECT_NAME = "CSHL-vision-course-2024"
+      }
+      steps {
+        sh 'python3.11 -m venv --system-site-packages $HOME'
+        sh '''#!/bin/bash -ex
+              source $HOME/bin/activate
+              pip install -U pip
+              # pip install -r requirements.txt
+              # python3.11 -c "import torch; print(torch.cuda.current_device())"
+              # make -C docs html
+           '''
+        lock('plenoptic_workshop_publish') {
+          script {
+            def scm = scmGit(branches: [[name: 'refs/heads/main']], userRemoteConfigs: [[credentialsId: 'github-jenkins', url: 'https://github.com/plenoptic-org/plenoptic-workshops.git']])
+            dir(path: 'workshops') {
+              checkout(changelog: false, poll: false, scm: scm)
+              sh """#!/bin/bash -ex
+                if [[ "${env.BRANCH_NAME}" =~ PR ]]; then
+                   out_dir="pulls/${env.BRANCH_NAME.replace('PR-', '')}"
+                elif [[ -n "${env.TAG_NAME}" ]]; then
+                   out_dir="tags/${env.TAG_NAME}"
+                else
+                   out_dir="branch/${env.BRANCH_NAME}"
+                fi
+                DOCS_DIR=workshops/\$PROJECT_NAME/\$out_dir
+                # rm -rf \$DOCS_DIR
+                # mkdir -p \$DOCS_DIR
+                # cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
+                # git add -A \$DOCS_DIR
+                # GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
+             """
+              // gitPush(gitScm: scm, targetBranch: 'main', targetRepo: 'origin')
+            }
+          }
+        }
+      }
+    }
+  }
+  post {
+    failure {
+      emailext subject: '$PROJECT_NAME - Build #$BUILD_NUMBER - $BUILD_STATUS',
+        body: '''$PROJECT_NAME - Build #$BUILD_NUMBER - $BUILD_STATUS
+
+Check console output at $BUILD_URL to view full results.
+
+Building $BRANCH_NAME for $CAUSE
+$JOB_DESCRIPTION
+
+Chages:
+$CHANGES
+
+End of build log:
+${BUILD_LOG,maxLines=200}
+''',
+	      recipientProviders: [
+		    [$class: 'DevelopersRecipientProvider'],
+	    ],
+	      replyTo: '$DEFAULT_REPLYTO'
+    }
+  }
+}

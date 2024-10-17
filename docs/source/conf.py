@@ -51,6 +51,12 @@ html_theme_options = {
     "use_repository_button": True,
     "icon_links": [
         {
+            "name": "Workshops home",
+            "url": "https://workshops.plenoptic.org/",
+            "type": "fontawesome",
+            "icon": "fa-solid fa-house",
+        },
+        {
             "name": "Binder",
             "url": "https://binder.flatironinstitute.org/v2/user/wbroderick/cshl2024?filepath=introduction-stripped.ipynb",
             "type": "url",
