@@ -42,7 +42,6 @@ pipeline {
                    out_dir="branch/${env.BRANCH_NAME}"
                 fi
                 DOCS_DIR=workshops/\$PROJECT_NAME/\$out_dir
-                echo hi
                 # rm -rf \$DOCS_DIR
                 # mkdir -p \$DOCS_DIR
                 # cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
