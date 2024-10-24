@@ -9,5 +9,5 @@ RUN apt-get update && \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
-    apt-get install curl && \
+    apt-get install curl -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
