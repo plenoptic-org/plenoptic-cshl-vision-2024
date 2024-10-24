@@ -50,7 +50,10 @@ pipeline {
                 GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
               """
               gitPush(gitScm: scm, targetBranch: 'main', targetRepo: 'origin')
-              sh """
+              // this being single quotes is VERY IMPORTANT. otherwise the
+              // GITHUB_TOKEN value would be exposed, see
+              // https://www.jenkins.io/doc/book/pipeline/jenkinsfile/#interpolation-of-sensitive-environment-variables
+              sh '''
                 if [[ "${env.BRANCH_NAME}" =~ PR ]]; then
                    ISSUE_NUM=${env.BRANCH_NAME.replace('PR-', '')}
                    DOCS_DIR=workshops/\$PROJECT_NAME/pulls/\$ISSUE_NUM
@@ -62,7 +65,7 @@ pipeline {
                      https://api.github.com/repos/plenoptic-org/plenoptic-cshl-vision-2024/issues/\$ISSUE_NUM/comments \
                      -d '{"body":"Documentation built at https://workshops.plenoptic.org/\$DOCS_DIR"}'
                 fi
-              """
+              '''
             }
           }
         }
