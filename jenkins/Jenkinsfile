@@ -55,7 +55,7 @@ pipeline {
               // this being single quotes is VERY IMPORTANT. otherwise the
               // GITHUB_TOKEN value would be exposed, see
               // https://www.jenkins.io/doc/book/pipeline/jenkinsfile/#interpolation-of-sensitive-environment-variables
-              sh '''
+              sh '''#!/bin/bash -ex
                 if [[ "$BRANCH_NAME" =~ PR ]]; then
                    DOCS_DIR=workshops/$PROJECT_NAME/pulls/$ISSUE_NUM
                    curl -L \
