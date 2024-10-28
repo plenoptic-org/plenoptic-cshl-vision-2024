@@ -9,4 +9,5 @@ RUN apt-get update && \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
+    apt-get install curl jq -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
