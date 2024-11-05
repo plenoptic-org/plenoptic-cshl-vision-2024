@@ -25,26 +25,16 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - name: Setup FFmpeg
-      uses: FedericoCarboni/setup-ffmpeg@v3.1
-    - name: Install python dependencies
-      run: pip install -r requirements.txt
-
     - name: Build site
       run: |
-        bash ./scripts/strip_text.sh
-        cd docs
-        # always print full traceback
-        make html O="-T"
+        # github pages site should just redirect to the new site
+        mkdir docs/build
+        cp redirect.html docs/build/index.html
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: docs/build/html
+        path: docs/build
 
   # Deployment job
   deploy:
