@@ -30,7 +30,8 @@ pipeline {
               pip install -U pip
               pip install -r requirements.txt
               python3.11 -c "import torch; print(torch.cuda.current_device())"
-              make -C docs html
+              bash ./scripts/strip_text.sh
+              make -C docs html O="-T"
            '''
         lock('plenoptic_workshop_publish') {
           script {
