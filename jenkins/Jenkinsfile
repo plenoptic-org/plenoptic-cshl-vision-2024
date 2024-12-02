@@ -50,7 +50,8 @@ pipeline {
                 rm -rf \$DOCS_DIR
                 mkdir -p \$DOCS_DIR
                 cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
-                git add -A workshops/\$PROJECT_NAME
+                # using -f here makes sure we add the index.html files, which are included in workshops .gitignore (since some are auto-generated)
+                git add -A -f --verbose workshops/\$PROJECT_NAME
                 GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
               """
               gitPush(gitScm: scm, targetBranch: 'main', targetRepo: 'origin')
@@ -66,7 +67,7 @@ pipeline {
                        -H "Accept: application/vnd.github+json" \
                        -H "Authorization: Bearer $GITHUB_TOKEN" \
                        -H "X-GitHub-Api-Version: 2022-11-28" \
-                       https://api.github.com/repos/plenoptic-org/plenoptic-cshl-vision-2024/issues/$ISSUE_NUM/comments)
+                       https://api.github.com/repos/$GITHUB_PATH/issues/$ISSUE_NUM/comments)
 
                    if [[ -z $(echo $comments | jq ".[].body" | grep "Documentation built by flatiron-jenkins") ]]; then
                        curl -L \
@@ -74,7 +75,7 @@ pipeline {
                          -H "Accept: application/vnd.github+json" \
                          -H "Authorization: Bearer $GITHUB_TOKEN" \
                          -H "X-GitHub-Api-Version: 2022-11-28" \
-                         https://api.github.com/repos/plenoptic-org/plenoptic-cshl-vision-2024/issues/$ISSUE_NUM/comments \
+                         https://api.github.com/repos/$GITHUB_PATH/issues/$ISSUE_NUM/comments \
                          -d \'{"body":"Documentation built by flatiron-jenkins at https://workshops.plenoptic.org/\'$DOCS_DIR\'"}\'
                    fi
                 fi
