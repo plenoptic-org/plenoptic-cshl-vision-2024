@@ -10,7 +10,6 @@ pipeline {
       agent {
         dockerfile {
           dir 'jenkins'
-          // map volumes so we still have access to output
           args '--gpus 1'
         }
       }
