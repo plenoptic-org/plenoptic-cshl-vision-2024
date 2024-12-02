@@ -52,6 +52,7 @@ pipeline {
                 cp -rp \$HOME/docs/build/html/* \$DOCS_DIR
                 ls \$DOCS_DIR
                 git add -A --verbose workshops/\$PROJECT_NAME
+                git add --verbose \$DOCS_DIR/index.html
                 GIT_COMMITTER_EMAIL="jenkins@flatironinstitute.org" GIT_COMMITTER_NAME="Flatiron Jenkins" git commit --author='Flatiron Jenkins <jenkins@flatironinstitute.org>' --allow-empty -m "Generated documentation for \$DOCS_DIR" -m '${env.BUILD_TAG}'
               """
               gitPush(gitScm: scm, targetBranch: 'main', targetRepo: 'origin')
